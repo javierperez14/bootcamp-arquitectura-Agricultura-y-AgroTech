@@ -77,31 +77,4 @@ Necesito empezar con una arquitectura simple, rápida de implementar y fácil de
 
 ---
 
-## 🖼️ Diagrama del Sistema
-
-El diagrama conceptual se encuentra en este archivo:
-
-**👉 diagrama.png**
-
-Puedes visualizarlo así:
-
-   ┌────────────────────┐
-   │ Agricultor         │
-   │ (Arrendatario)     │
-   └───────┬────────────┘
-           │  Busca y alquila
-           ▼
-   ┌──────────────────────────┐
-   │ Plataforma de            │
-   │ Maquinaria Agrícola      │
-   │ Compartida               │
-   └───────┬─────────┬────────┘
-           │          │
- Registra │          │ Supervisa
-           ▼          ▼
- ┌────────────────┐   ┌───────────────────┐
- │ Propietario    │   │ Administrador     │
- │ de Maquinaria  │   │ del Sistema       │
- └────────────────┘   └───────────────────┘
-
 
