@@ -1,0 +1,15 @@
+{
+  "name": "agricultura-y-agrotech",
+  "version": "1.0.0",
+  "description": "Proyecto Semana 02 - Arquitectura + Principios SOLID - Agricultura y AgroTech",
+  "main": "src/index.js",
+  "type": "module",
+
+  "scripts": {
+    "test": "node tests/maquinaria-service.test.js",
+    "start": "node src/index.js"
+  },
+  "keywords": [],
+  "author": "Javier Perez",
+  "license": "MIT"
+}
