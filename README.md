@@ -179,26 +179,6 @@ En la tercera semana analicé y seleccioné el patrón arquitectónico más adec
 2. **Semana 02**: Los principios SOLID hacen el código más mantenible y testeable
 3. **Semana 03**: La arquitectura correcta facilita la evolución del sistema sin reescribir todo
 
----
-
-## 👨‍💻 Autor
-
-**Javier Pérez**  
-Tecnólogo en Análisis y Desarrollo de Software  
-SENA - Centro de Servicios Financieros, Bogotá  
-Tercer Trimestre - Competencia: Arquitectura de Software
-
----
-
-## 📚 Referencias Consultadas
-
-- "Clean Architecture" - Robert C. Martin
-- "Hexagonal Architecture Explained" - Juan Manuel Garrido de Paz
-- [Hexagonal Architecture by Alistair Cockburn](https://alistair.cockburn.us/hexagonal-architecture/)
-- [Ports and Adapters Pattern](https://herbertograca.com/2017/09/14/ports-adapters-architecture/)
-- Principios SOLID - Robert C. Martin
-
----
 
 ## 📅 Información del Proyecto
 
@@ -206,8 +186,4 @@ Tercer Trimestre - Competencia: Arquitectura de Software
 - **Dominio**: Agricultura y Tecnología IoT
 - **Período**: Febrero 2026
 - **Metodología**: Proyecto Integrador SENA
-- **Duración**: 6 meses (MVP)
-
 ---
-
-**Nota**: Este proyecto es parte del proceso formativo del tecnólogo ADSO en el SENA. La arquitectura definida se implementará progresivamente en las siguientes semanas del proyecto integrador.
