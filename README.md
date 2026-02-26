@@ -136,6 +136,79 @@ En la tercera semana analicé y seleccioné el patrón arquitectónico más adec
 
 ---
 
+### 🗓️ Semana 04: API REST con OpenAPI y Swagger
+
+| Semana | Enfoque                  | Resultado                                                |
+| :----: | ------------------------ | -------------------------------------------------------- |
+|   01   | Análisis y Planificación | Dominio definido + Stack tecnológico + Metodología      |
+|   02   | Implementación SOLID     | Código modular + Separación de responsabilidades        |
+|   03   | Arquitectura             | Patrón hexagonal seleccionado + Diagramas + ADR          |
+|   04   | API REST + OpenAPI       | API funcional + Swagger UI + Documentación completa      |
+|   05   | *(Próxima)*              | Autenticación + Base de datos + Tests automatizados     |
+- **API REST funcional**:
+  - CRUD completo de maquinaria agrícola
+  - Sistema de reservas y alquileres
+  - Filtros avanzados (tipo, ubicación, disponibilidad)
+  - Paginación en todos los listados
+  - Manejo centralizado de errores
+  - Respuestas HTTP estandarizadas
+
+- **Arquitectura en capas**:
+  - **Routes**: Enrutamiento HTTP
+  - **Controllers**: Manejo de peticiones
+  - **Services**: Lógica de negocio y validaciones
+  - **Repositories**: Acceso a datos (in-memory)
+  - **Middleware**: Error handler global
+  - **Utils**: HTTP Response y API Error
+
+- **Documentación OpenAPI 3.0**:
+  - Especificación completa en `openapi.yaml`
+  - 2 recursos principales (Maquinaria y Reservas)
+  - Schemas reutilizables
+  - Ejemplos realistas
+  - Respuestas de error documentadas (400, 404, 409, 500)
+
+- **Swagger UI integrado**:
+  - Documentación interactiva en `/api-docs`
+  - Pruebas directas desde el navegador
+  - Visualización de schemas y ejemplos
+
+## 🎓 Aprendizajes Clave
+
+1. **Semana 01**: Importancia de definir bien el problema antes de programar
+2. **Semana 02**: Los principios SOLID hacen el código más mantenible y testeable
+3. **Semana 03**: La arquitectura correcta facilita la evolución del sistema sin reescribir todo
+4. **Semana 04**: Una API bien documentada con OpenAPI facilita la integración y el trabajo en equipo
+  - `PATCH /api/v1/maquinaria/:id` - Actualizar parcial
+  - `DELETE /api/v1/maquinaria/:id` - Eliminar
+  - `GET /api/v1/reservas` - Listar reservas
+  - `POST /api/v1/reservas` - Crear reserva
+  - `PATCH /api/v1/reservas/:id` - Actualizar estado
+
+- **Validaciones de negocio**:
+  - Validación de campos requeridos
+  - Validación de tipos de datos
+  - Verificación de disponibilidad de maquinaria
+  - Cálculo automático de costos de reserva
+  - Validación de fechas
+
+**Entregables**:
+- openapi.yaml (especificación OpenAPI 3.0 completa)
+- Código fuente con arquitectura en capas
+- diagrama-componentes.md (diagrama Mermaid detallado)
+- tests/api.http (35 casos de prueba)
+- README-PROYECTO.md con documentación completa
+
+**Ejecutar el proyecto**:
+```bash
+cd bc-arquitectura-week-04
+npm install
+npm run dev
+# Abrir http://localhost:3000/api-docs
+```
+---
+---
+
 ## 🎯 Evolución del Proyecto
 
 | Semana | Enfoque                  | Resultado                                                |
