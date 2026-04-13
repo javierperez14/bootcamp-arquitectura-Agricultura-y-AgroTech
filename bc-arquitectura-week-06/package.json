@@ -1,0 +1,21 @@
+{
+  "name": "agrotech-api",
+  "version": "1.0.0",
+  "description": "API REST para gestión de maquinaria agrícola compartida",
+  "main": "src/index.js",
+  "type": "module",
+  "packageManager": "pnpm@9.0.0",
+  "scripts": {
+    "dev": "node --watch src/index.js",
+    "start": "node src/index.js",
+    "test": "node --test tests/domain/domain.test.js tests/application/use-cases.test.js"
+  },
+  "keywords": ["api", "rest", "agrotech", "agricultura", "openapi"],
+  "author": "Javier Pérez",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "swagger-ui-express": "^5.0.0",
+    "yaml": "^2.3.4"
+  }
+}

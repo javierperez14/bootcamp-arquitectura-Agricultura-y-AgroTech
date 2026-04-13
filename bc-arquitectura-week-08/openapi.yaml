@@ -1,0 +1,771 @@
+openapi: 3.0.3
+info:
+  title: AgroTech API - Gestión de Maquinaria Agrícola
+  description: |
+    API REST para la gestión de maquinaria agrícola compartida, permitiendo a propietarios 
+    publicar su maquinaria y a agricultores alquilarla de forma eficiente.
+    
+    ## Características principales
+    - Gestión completa de maquinaria agrícola (CRUD)
+    - Sistema de reservas y alquileres
+    - Filtrado por tipo, ubicación y disponibilidad
+    - Paginación en listados
+    
+  version: 1.0.0
+  contact:
+    name: Javier Pérez
+    email: javier.perez@sena.edu.co
+  license:
+    name: MIT
+
+servers:
+  - url: http://localhost:3000/api/v1
+    description: Servidor de desarrollo
+
+tags:
+  - name: Maquinaria
+    description: Operaciones sobre maquinaria agrícola
+  - name: Reservas
+    description: Gestión de reservas y alquileres
+
+paths:
+  /maquinaria:
+    get:
+      tags:
+        - Maquinaria
+      summary: Listar maquinaria agrícola
+      description: Obtiene un listado paginado de maquinaria con filtros opcionales
+      parameters:
+        - name: tipo
+          in: query
+          description: Filtrar por tipo de maquinaria
+          schema:
+            type: string
+            enum: [tractor, sembradora, cosechadora, fumigadora, arado]
+        - name: disponible
+          in: query
+          description: Filtrar por disponibilidad
+          schema:
+            type: boolean
+        - name: ubicacion
+          in: query
+          description: Filtrar por ubicación
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: Número de página
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          description: Cantidad de resultados por página
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+      responses:
+        '200':
+          description: Lista de maquinaria obtenida exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedMaquinariaResponse'
+              example:
+                success: true
+                data:
+                  - id: "maq-001"
+                    nombre: "Tractor John Deere 5075E"
+                    tipo: "tractor"
+                    marca: "John Deere"
+                    modelo: "5075E"
+                    año: 2020
+                    potencia: "75 HP"
+                    ubicacion: "Cundinamarca, Facatativá"
+                    precioPorHora: 45000
+                    precioPorDia: 320000
+                    disponible: true
+                    propietarioId: "user-123"
+                    imagenes: ["https://example.com/tractor1.jpg"]
+                    descripcion: "Tractor en excelente estado, ideal para labores de arado y siembra"
+                  - id: "maq-002"
+                    nombre: "Cosechadora Case IH 2388"
+                    tipo: "cosechadora"
+                    marca: "Case IH"
+                    modelo: "2388"
+                    año: 2018
+                    potencia: "285 HP"
+                    ubicacion: "Tolima, Ibagué"
+                    precioPorHora: 120000
+                    precioPorDia: 850000
+                    disponible: true
+                    propietarioId: "user-456"
+                    imagenes: ["https://example.com/cosechadora1.jpg"]
+                    descripcion: "Cosechadora de alta capacidad para cultivos de arroz y maíz"
+                meta:
+                  pagination:
+                    page: 1
+                    limit: 10
+                    total: 25
+                    totalPages: 3
+                    hasNext: true
+                    hasPrev: false
+                timestamp: "2026-02-25T10:30:00.000Z"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+    post:
+      tags:
+        - Maquinaria
+      summary: Crear nueva maquinaria
+      description: Registra una nueva maquinaria en el sistema
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MaquinariaInput'
+            example:
+              nombre: "Tractor Massey Ferguson 4283"
+              tipo: "tractor"
+              marca: "Massey Ferguson"
+              modelo: "4283"
+              año: 2021
+              potencia: "83 HP"
+              ubicacion: "Boyacá, Tunja"
+              precioPorHora: 50000
+              precioPorDia: 350000
+              disponible: true
+              propietarioId: "user-789"
+              imagenes: ["https://example.com/tractor-mf.jpg"]
+              descripcion: "Tractor versátil para todo tipo de labores agrícolas"
+      responses:
+        '201':
+          description: Maquinaria creada exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MaquinariaResponse'
+              example:
+                success: true
+                data:
+                  id: "maq-003"
+                  nombre: "Tractor Massey Ferguson 4283"
+                  tipo: "tractor"
+                  marca: "Massey Ferguson"
+                  modelo: "4283"
+                  año: 2021
+                  potencia: "83 HP"
+                  ubicacion: "Boyacá, Tunja"
+                  precioPorHora: 50000
+                  precioPorDia: 350000
+                  disponible: true
+                  propietarioId: "user-789"
+                  imagenes: ["https://example.com/tractor-mf.jpg"]
+                  descripcion: "Tractor versátil para todo tipo de labores agrícolas"
+                timestamp: "2026-02-25T10:35:00.000Z"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /maquinaria/{id}:
+    get:
+      tags:
+        - Maquinaria
+      summary: Obtener maquinaria por ID
+      description: Retorna los detalles de una maquinaria específica
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID de la maquinaria
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Maquinaria encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MaquinariaResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+    put:
+      tags:
+        - Maquinaria
+      summary: Actualizar maquinaria completa
+      description: Actualiza todos los campos de una maquinaria
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID de la maquinaria
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MaquinariaInput'
+      responses:
+        '200':
+          description: Maquinaria actualizada exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MaquinariaResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+    patch:
+      tags:
+        - Maquinaria
+      summary: Actualizar maquinaria parcialmente
+      description: Actualiza solo los campos especificados
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID de la maquinaria
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MaquinariaPartialInput'
+            example:
+              disponible: false
+              precioPorDia: 380000
+      responses:
+        '200':
+          description: Maquinaria actualizada exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MaquinariaResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+    delete:
+      tags:
+        - Maquinaria
+      summary: Eliminar maquinaria
+      description: Elimina una maquinaria del sistema
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID de la maquinaria
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Maquinaria eliminada exitosamente
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /reservas:
+    get:
+      tags:
+        - Reservas
+      summary: Listar reservas
+      description: Obtiene un listado de reservas con filtros opcionales
+      parameters:
+        - name: maquinariaId
+          in: query
+          description: Filtrar por ID de maquinaria
+          schema:
+            type: string
+        - name: usuarioId
+          in: query
+          description: Filtrar por ID de usuario
+          schema:
+            type: string
+        - name: estado
+          in: query
+          description: Filtrar por estado de la reserva
+          schema:
+            type: string
+            enum: [pendiente, confirmada, en_uso, completada, cancelada]
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Lista de reservas obtenida exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedReservasResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+    post:
+      tags:
+        - Reservas
+      summary: Crear nueva reserva
+      description: Crea una reserva de maquinaria
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReservaInput'
+            example:
+              maquinariaId: "maq-001"
+              usuarioId: "user-999"
+              fechaInicio: "2026-03-01T08:00:00.000Z"
+              fechaFin: "2026-03-01T18:00:00.000Z"
+              tipoAlquiler: "horas"
+              cantidad: 10
+              ubicacionEntrega: "Finca El Rosal, Vereda La Esperanza"
+              observaciones: "Necesito el tractor para arado de 5 hectáreas"
+      responses:
+        '201':
+          description: Reserva creada exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReservaResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /reservas/{id}:
+    get:
+      tags:
+        - Reservas
+      summary: Obtener reserva por ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Reserva encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReservaResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+    patch:
+      tags:
+        - Reservas
+      summary: Actualizar estado de reserva
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                estado:
+                  type: string
+                  enum: [pendiente, confirmada, en_uso, completada, cancelada]
+            example:
+              estado: "confirmada"
+      responses:
+        '200':
+          description: Reserva actualizada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReservaResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+components:
+  schemas:
+    Maquinaria:
+      type: object
+      required:
+        - id
+        - nombre
+        - tipo
+        - marca
+        - ubicacion
+        - precioPorDia
+        - disponible
+        - propietarioId
+      properties:
+        id:
+          type: string
+          description: Identificador único de la maquinaria
+        nombre:
+          type: string
+          description: Nombre descriptivo de la maquinaria
+        tipo:
+          type: string
+          enum: [tractor, sembradora, cosechadora, fumigadora, arado]
+          description: Tipo de maquinaria agrícola
+        marca:
+          type: string
+          description: Marca del fabricante
+        modelo:
+          type: string
+          description: Modelo específico
+        año:
+          type: integer
+          minimum: 1990
+          maximum: 2030
+          description: Año de fabricación
+        potencia:
+          type: string
+          description: Potencia del motor (ej. "75 HP")
+        ubicacion:
+          type: string
+          description: Ubicación de la maquinaria
+        precioPorHora:
+          type: number
+          minimum: 0
+          description: Precio por hora de alquiler en COP
+        precioPorDia:
+          type: number
+          minimum: 0
+          description: Precio por día de alquiler en COP
+        disponible:
+          type: boolean
+          description: Indica si está disponible para alquiler
+        propietarioId:
+          type: string
+          description: ID del propietario
+        imagenes:
+          type: array
+          items:
+            type: string
+          description: URLs de imágenes de la maquinaria
+        descripcion:
+          type: string
+          description: Descripción detallada
+
+    MaquinariaInput:
+      type: object
+      required:
+        - nombre
+        - tipo
+        - marca
+        - ubicacion
+        - precioPorDia
+        - propietarioId
+      properties:
+        nombre:
+          type: string
+        tipo:
+          type: string
+          enum: [tractor, sembradora, cosechadora, fumigadora, arado]
+        marca:
+          type: string
+        modelo:
+          type: string
+        año:
+          type: integer
+        potencia:
+          type: string
+        ubicacion:
+          type: string
+        precioPorHora:
+          type: number
+        precioPorDia:
+          type: number
+        disponible:
+          type: boolean
+          default: true
+        propietarioId:
+          type: string
+        imagenes:
+          type: array
+          items:
+            type: string
+        descripcion:
+          type: string
+
+    MaquinariaPartialInput:
+      type: object
+      properties:
+        nombre:
+          type: string
+        disponible:
+          type: boolean
+        precioPorHora:
+          type: number
+        precioPorDia:
+          type: number
+        ubicacion:
+          type: string
+        descripcion:
+          type: string
+
+    Reserva:
+      type: object
+      required:
+        - id
+        - maquinariaId
+        - usuarioId
+        - fechaInicio
+        - fechaFin
+        - estado
+        - total
+      properties:
+        id:
+          type: string
+        maquinariaId:
+          type: string
+        usuarioId:
+          type: string
+        fechaInicio:
+          type: string
+          format: date-time
+        fechaFin:
+          type: string
+          format: date-time
+        tipoAlquiler:
+          type: string
+          enum: [horas, dias]
+        cantidad:
+          type: number
+          description: Cantidad de horas o días
+        total:
+          type: number
+          description: Costo total de la reserva
+        estado:
+          type: string
+          enum: [pendiente, confirmada, en_uso, completada, cancelada]
+        ubicacionEntrega:
+          type: string
+        observaciones:
+          type: string
+
+    ReservaInput:
+      type: object
+      required:
+        - maquinariaId
+        - usuarioId
+        - fechaInicio
+        - fechaFin
+        - tipoAlquiler
+        - cantidad
+      properties:
+        maquinariaId:
+          type: string
+        usuarioId:
+          type: string
+        fechaInicio:
+          type: string
+          format: date-time
+        fechaFin:
+          type: string
+          format: date-time
+        tipoAlquiler:
+          type: string
+          enum: [horas, dias]
+        cantidad:
+          type: number
+        ubicacionEntrega:
+          type: string
+        observaciones:
+          type: string
+
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+        limit:
+          type: integer
+        total:
+          type: integer
+        totalPages:
+          type: integer
+        hasNext:
+          type: boolean
+        hasPrev:
+          type: boolean
+
+    MaquinariaResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          $ref: '#/components/schemas/Maquinaria'
+        timestamp:
+          type: string
+          format: date-time
+
+    PaginatedMaquinariaResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Maquinaria'
+        meta:
+          type: object
+          properties:
+            pagination:
+              $ref: '#/components/schemas/Pagination'
+        timestamp:
+          type: string
+          format: date-time
+
+    ReservaResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          $ref: '#/components/schemas/Reserva'
+        timestamp:
+          type: string
+          format: date-time
+
+    PaginatedReservasResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Reserva'
+        meta:
+          type: object
+          properties:
+            pagination:
+              $ref: '#/components/schemas/Pagination'
+        timestamp:
+          type: string
+          format: date-time
+
+    Error:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+            details:
+              type: object
+            statusCode:
+              type: integer
+        timestamp:
+          type: string
+          format: date-time
+
+  responses:
+    BadRequest:
+      description: Solicitud inválida
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            success: false
+            error:
+              message: "Datos de entrada inválidos"
+              details:
+                nombre: "El nombre es requerido"
+                tipo: "El tipo debe ser uno de: tractor, sembradora, cosechadora, fumigadora, arado"
+              statusCode: 400
+            timestamp: "2026-02-25T10:30:00.000Z"
+
+    NotFound:
+      description: Recurso no encontrado
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            success: false
+            error:
+              message: "Maquinaria no encontrada"
+              statusCode: 404
+            timestamp: "2026-02-25T10:30:00.000Z"
+
+    Conflict:
+      description: Conflicto con el estado actual
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            success: false
+            error:
+              message: "La maquinaria ya está reservada para esas fechas"
+              statusCode: 409
+            timestamp: "2026-02-25T10:30:00.000Z"
+
+    InternalError:
+      description: Error interno del servidor
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            success: false
+            error:
+              message: "Error interno del servidor"
+              statusCode: 500
+            timestamp: "2026-02-25T10:30:00.000Z"

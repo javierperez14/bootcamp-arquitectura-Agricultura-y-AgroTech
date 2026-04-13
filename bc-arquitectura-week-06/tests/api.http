@@ -1,0 +1,249 @@
+### Variables
+@baseUrl = http://localhost:3000/api/v1
+@maquinariaId = maq-001
+@reservaId = res-001
+
+### ========================================
+### MAQUINARIA - Endpoints
+### ========================================
+
+### 1. Listar toda la maquinaria (sin filtros)
+GET {{baseUrl}}/maquinaria
+
+### 2. Listar maquinaria con paginación
+GET {{baseUrl}}/maquinaria?page=1&limit=3
+
+### 3. Filtrar por tipo (tractores)
+GET {{baseUrl}}/maquinaria?tipo=tractor
+
+### 4. Filtrar por disponibilidad
+GET {{baseUrl}}/maquinaria?disponible=true
+
+### 5. Filtrar por ubicación
+GET {{baseUrl}}/maquinaria?ubicacion=Cundinamarca
+
+### 6. Filtros combinados con paginación
+GET {{baseUrl}}/maquinaria?tipo=tractor&disponible=true&page=1&limit=5
+
+### 7. Obtener maquinaria por ID (éxito)
+GET {{baseUrl}}/maquinaria/{{maquinariaId}}
+
+### 8. Obtener maquinaria por ID (no encontrada)
+GET {{baseUrl}}/maquinaria/maq-999
+
+### 9. Crear nueva maquinaria (éxito)
+POST {{baseUrl}}/maquinaria
+Content-Type: application/json
+
+{
+  "nombre": "Tractor Massey Ferguson 4283",
+  "tipo": "tractor",
+  "marca": "Massey Ferguson",
+  "modelo": "4283",
+  "año": 2021,
+  "potencia": "83 HP",
+  "ubicacion": "Boyacá, Tunja",
+  "precioPorHora": 50000,
+  "precioPorDia": 350000,
+  "disponible": true,
+  "propietarioId": "user-789",
+  "imagenes": ["https://example.com/tractor-mf.jpg"],
+  "descripcion": "Tractor versátil para todo tipo de labores agrícolas"
+}
+
+### 10. Crear maquinaria (error de validación - falta nombre)
+POST {{baseUrl}}/maquinaria
+Content-Type: application/json
+
+{
+  "tipo": "tractor",
+  "marca": "John Deere",
+  "ubicacion": "Bogotá",
+  "precioPorDia": 300000,
+  "propietarioId": "user-123"
+}
+
+### 11. Crear maquinaria (error de validación - tipo inválido)
+POST {{baseUrl}}/maquinaria
+Content-Type: application/json
+
+{
+  "nombre": "Máquina Especial",
+  "tipo": "excavadora",
+  "marca": "Caterpillar",
+  "ubicacion": "Bogotá",
+  "precioPorDia": 500000,
+  "propietarioId": "user-123"
+}
+
+### 12. Actualizar maquinaria completa (PUT)
+PUT {{baseUrl}}/maquinaria/{{maquinariaId}}
+Content-Type: application/json
+
+{
+  "nombre": "Tractor John Deere 5075E - Actualizado",
+  "tipo": "tractor",
+  "marca": "John Deere",
+  "modelo": "5075E",
+  "año": 2020,
+  "potencia": "75 HP",
+  "ubicacion": "Cundinamarca, Facatativá",
+  "precioPorHora": 48000,
+  "precioPorDia": 340000,
+  "disponible": true,
+  "propietarioId": "user-123",
+  "imagenes": ["https://example.com/tractor1-new.jpg"],
+  "descripcion": "Tractor en excelente estado, recién actualizado"
+}
+
+### 13. Actualizar maquinaria parcialmente (PATCH)
+PATCH {{baseUrl}}/maquinaria/{{maquinariaId}}
+Content-Type: application/json
+
+{
+  "disponible": false,
+  "precioPorDia": 360000
+}
+
+### 14. Actualizar maquinaria no existente
+PATCH {{baseUrl}}/maquinaria/maq-999
+Content-Type: application/json
+
+{
+  "disponible": true
+}
+
+### 15. Eliminar maquinaria (éxito)
+DELETE {{baseUrl}}/maquinaria/maq-005
+
+### 16. Eliminar maquinaria no existente
+DELETE {{baseUrl}}/maquinaria/maq-999
+
+### ========================================
+### RESERVAS - Endpoints
+### ========================================
+
+### 17. Listar todas las reservas
+GET {{baseUrl}}/reservas
+
+### 18. Listar reservas con paginación
+GET {{baseUrl}}/reservas?page=1&limit=5
+
+### 19. Filtrar reservas por maquinaria
+GET {{baseUrl}}/reservas?maquinariaId=maq-001
+
+### 20. Filtrar reservas por usuario
+GET {{baseUrl}}/reservas?usuarioId=user-999
+
+### 21. Filtrar reservas por estado
+GET {{baseUrl}}/reservas?estado=confirmada
+
+### 22. Filtros combinados
+GET {{baseUrl}}/reservas?maquinariaId=maq-001&estado=pendiente
+
+### 23. Obtener reserva por ID (éxito)
+GET {{baseUrl}}/reservas/{{reservaId}}
+
+### 24. Obtener reserva por ID (no encontrada)
+GET {{baseUrl}}/reservas/res-999
+
+### 25. Crear nueva reserva (éxito)
+POST {{baseUrl}}/reservas
+Content-Type: application/json
+
+{
+  "maquinariaId": "maq-003",
+  "usuarioId": "user-777",
+  "fechaInicio": "2026-03-10T08:00:00.000Z",
+  "fechaFin": "2026-03-12T18:00:00.000Z",
+  "tipoAlquiler": "dias",
+  "cantidad": 2,
+  "ubicacionEntrega": "Finca La Primavera, Vereda El Carmen",
+  "observaciones": "Necesito la sembradora para cultivo de maíz"
+}
+
+### 26. Crear reserva (error - maquinaria no existe)
+POST {{baseUrl}}/reservas
+Content-Type: application/json
+
+{
+  "maquinariaId": "maq-999",
+  "usuarioId": "user-777",
+  "fechaInicio": "2026-03-10T08:00:00.000Z",
+  "fechaFin": "2026-03-12T18:00:00.000Z",
+  "tipoAlquiler": "dias",
+  "cantidad": 2
+}
+
+### 27. Crear reserva (error - maquinaria no disponible)
+POST {{baseUrl}}/reservas
+Content-Type: application/json
+
+{
+  "maquinariaId": "maq-004",
+  "usuarioId": "user-777",
+  "fechaInicio": "2026-03-10T08:00:00.000Z",
+  "fechaFin": "2026-03-12T18:00:00.000Z",
+  "tipoAlquiler": "dias",
+  "cantidad": 2
+}
+
+### 28. Crear reserva (error de validación - falta campo requerido)
+POST {{baseUrl}}/reservas
+Content-Type: application/json
+
+{
+  "maquinariaId": "maq-001",
+  "usuarioId": "user-777",
+  "fechaInicio": "2026-03-10T08:00:00.000Z"
+}
+
+### 29. Crear reserva (error - fechas inválidas)
+POST {{baseUrl}}/reservas
+Content-Type: application/json
+
+{
+  "maquinariaId": "maq-001",
+  "usuarioId": "user-777",
+  "fechaInicio": "2026-03-12T18:00:00.000Z",
+  "fechaFin": "2026-03-10T08:00:00.000Z",
+  "tipoAlquiler": "dias",
+  "cantidad": 2
+}
+
+### 30. Actualizar estado de reserva (éxito)
+PATCH {{baseUrl}}/reservas/{{reservaId}}
+Content-Type: application/json
+
+{
+  "estado": "en_uso"
+}
+
+### 31. Actualizar estado de reserva (estado inválido)
+PATCH {{baseUrl}}/reservas/{{reservaId}}
+Content-Type: application/json
+
+{
+  "estado": "estado_invalido"
+}
+
+### 32. Actualizar reserva no existente
+PATCH {{baseUrl}}/reservas/res-999
+Content-Type: application/json
+
+{
+  "estado": "confirmada"
+}
+
+### ========================================
+### CASOS DE PRUEBA ADICIONALES
+### ========================================
+
+### 33. Endpoint raíz (información de la API)
+GET http://localhost:3000/
+
+### 34. Documentación Swagger
+GET http://localhost:3000/api-docs
+
+### 35. Endpoint no existente (404)
+GET {{baseUrl}}/endpoint-inexistente
